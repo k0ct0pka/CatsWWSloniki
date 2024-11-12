@@ -6,3 +6,5 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+/artifacts/catsWWSloniki_war.xml
+/artifacts/catsWWSloniki_war_exploded.xml

@@ -8,8 +8,8 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 
 public class AwsS3Config {
-    private final String ACCESS_KEY = "AKIAQEIP3GKFAHYBENSN";
-    private final String SECRET_KEY = "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";
+    private final String ACCESS_KEY = "..";
+    private final String SECRET_KEY = "..";
     private final String REGION = "us-east-1";
 
     public AmazonS3 getS3ClientFactory() {
