@@ -1,4 +1,4 @@
-package services;
+package services.storageImpls;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
@@ -6,15 +6,21 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Service;
+import services.StorageService;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class S3StorageService {
-    private final String BUCKET_NAME = "catswwsloniki";
-    private AmazonS3 s3;
+@Service
+@ComponentScan("src.main.java.configs")
+public class S3StorageService implements StorageService {
+    @Value("${AWS.S3.BUCKET_NAME}")
+    private final String BUCKET_NAME;
+    private final AmazonS3 s3;
     private Logger log;
     @SneakyThrows
     public void uploadFile(Integer id, InputStream inputStream) {
@@ -28,6 +34,7 @@ public class S3StorageService {
     public byte[] downloadFile(Integer id) {
         S3Object object = s3.getObject(new GetObjectRequest(BUCKET_NAME, "/cats/"+id));
         S3ObjectInputStream objectContent = object.getObjectContent();
+        log.info("Downloaded file{}",id);
         return objectContent.readAllBytes();
     }
 }

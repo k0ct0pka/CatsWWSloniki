@@ -16,6 +16,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <junit.version>5.10.0</junit.version>
         <jooq.version>3.19.14</jooq.version>
+        <spring.version>6.1.10</spring.version>
     </properties>
 
     <dependencies>
@@ -45,6 +46,43 @@
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>1.12.749</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -71,11 +109,7 @@
             <version>${jooq.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>10.20.1</version>
-        </dependency>
+
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -95,11 +129,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>9.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
             <version>6.3.3</version>
@@ -109,6 +138,18 @@
             <artifactId>HikariCP</artifactId>
             <version>5.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>10.7.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -137,25 +178,43 @@
 
                     <generator>
                         <database>
-                            <name>org.jooq.meta.mysql.MySQLDatabase</name>
+                            <name>org.jooq.meta.postgres.PostgresDatabase</name>
                             <includes>.*</includes>
-                            <inputSchema>public</inputSchema>
+                            <inputSchema>cats_ww_sloniki</inputSchema>
                         </database>
                         <target>
-                            <packageName>org.example</packageName>
+                            <packageName>src.main</packageName>
                             <directory>${project.build.directory}\generated-sources\jooq</directory>
                         </target>
 
                     </generator>
                     <jdbc>
-                        <driver>com.mysql.jdbc.Driver</driver>
-                        <url>jdbc:mysql://localhost:3306/cats_ww_sloniki</url>
-                        <user>root</user>
-                        <password></password>
+                        <driver>org.postgresql.Driver</driver>
+                        <url>jdbc:postgresql://localhost:5432/cats_ww_sloniki</url>
+                        <user>postgres</user>
+                        <password>postgres</password>
                     </jdbc>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>10.7.1</version>
+                <configuration>
+                    <url>jdbc:postgresql://localhost:5432/cats_ww_sloniki</url>
+                    <user>postgres</user>
+                    <password>postgres</password>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.flywaydb</groupId>
+                        <artifactId>flyway-core</artifactId>
+                        <version>10.7.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
+
 
     </build>
 </project>
