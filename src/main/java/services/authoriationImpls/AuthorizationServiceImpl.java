@@ -7,19 +7,24 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import services.AuthorizationService;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Component
 public class AuthorizationServiceImpl implements AuthorizationService {
-    private final UserDao userDao;
-    private final UserFactory userFactory;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-
+    @Autowired
+    private UserDao userDao;
+    @Autowired
+    private UserFactory userFactory;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public void registerUser(HttpServletRequest req) {

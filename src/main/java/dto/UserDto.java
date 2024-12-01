@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @Builder
 public class UserDto {
-    int id;
+    Integer id;
     String name;
     String email;
     String password;

@@ -1,20 +1,27 @@
 package dao.impls;
 
 import com.zaxxer.hikari.HikariDataSource;
+import configs.HikariConfiguration;
 import dao.BaseDao;
 import dto.UserDto;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Repository;
 
 import static src.main.tables.User.USER;
 
 @Repository
+
 @RequiredArgsConstructor
 public class UserDao implements BaseDao<UserDto> {
-    private final DSLContext dsl;
-    private Logger log;
+    @Autowired
+    private DSLContext dsl;
+    private final Logger log = LoggerFactory.getLogger(UserDao.class);
 
     @Override
     public void save(UserDto user) {

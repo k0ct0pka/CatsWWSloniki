@@ -2,10 +2,12 @@ package services.storageImpls;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import dao.impls.UserDao;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ public class S3StorageService implements StorageService {
     @Value("${AWS.S3.BUCKET_NAME}")
     private final String BUCKET_NAME;
     private final AmazonS3 s3;
-    private Logger log;
+    private Logger log  = LoggerFactory.getLogger(S3StorageService.class);
     @SneakyThrows
     public void uploadFile(Integer id, InputStream inputStream) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
