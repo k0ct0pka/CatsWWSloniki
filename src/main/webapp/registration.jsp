@@ -12,6 +12,8 @@
     <title>Register</title>
 </head>
 <body>
+<a href="login.jsp"> login</a>
+
 <form action="${pageContext.request.contextPath}/authorize" method="post">
     <label>
         Name:

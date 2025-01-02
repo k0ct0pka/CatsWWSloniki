@@ -10,13 +10,6 @@
 
     <context:annotation-config />
     <context:spring-configured/>
-    <bean id="userDao" class="dao.impls.UserDao">
-        <constructor-arg index="0" ref="hikariDataSource"/>
-    </bean>
-    <bean id="authorizationServiceImpl" class="services.authoriationImpls.AuthorizationServiceImpl">
-        <constructor-arg index="0" ref=""/>
-        <constructor-arg index="1" ref=""/>
-        <constructor-arg index="2" ref=""/>
-    </bean>
+
 
 </beans>

@@ -1,10 +1,9 @@
 package servlets;
 
-import configs.AwsS3Config;
-import configs.FileUploaderConfig;
 import configs.HikariConfiguration;
 import dao.impls.CatDao;
 import dao.impls.UserDao;
+import dto.CatDto;
 import factories.impls.CatFactory;
 import factories.impls.UserFactory;
 import jakarta.servlet.ServletConfig;
@@ -19,50 +18,41 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import services.AuthorizationService;
-import services.StorageService;
 import services.authoriationImpls.AuthorizationServiceImpl;
 import services.dtoServices.CatService;
 import services.storageImpls.S3StorageService;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
-@WebServlet("/authorize")
+@WebServlet("/home")
 @NoArgsConstructor
 @Component
-@ComponentScan(basePackageClasses = AuthorizationServiceImpl.class)
-public class AuthorizationServlet extends HttpServlet {
+@ComponentScan(basePackageClasses = CatService.class)
+public class HomeServlet extends HttpServlet {
     @Autowired
-    private AuthorizationServiceImpl authorizationService;
-
+    private CatService catService;
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         AnnotationConfigWebApplicationContext ac = (AnnotationConfigWebApplicationContext) config.getServletContext().getAttribute("applicationContext");
-        ac.scan("org.example");
-        ac.register(HikariConfiguration.class);
-        ac.register(AwsS3Config.class);
-        ac.register(FileUploaderConfig.class);
-        ac.refresh();
-        ac.register(UserDao.class);
-        ac.register(UserFactory.class);
-        ac.register(BCryptPasswordEncoder.class);
-        ac.register(AuthorizationServiceImpl.class);
-        ac.register(CatService.class, S3StorageService.class,CatFactory.class,CatDao.class);
+
         ac.refresh();
         ac.getAutowireCapableBeanFactory().autowireBean(this);
+    }
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<CatDto> all = catService.getAll();
+        Collections.shuffle(all);
+        req.getSession().setAttribute("cats",all);
+        req.getRequestDispatcher("/home.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        authorizationService.registerUser(req);
-        resp.sendRedirect("/login.jsp");
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        authorizationService.loginUser(req);
-        req.getRequestDispatcher("/home").forward(req, resp);
+        catService.save(req);
+        resp.sendRedirect("/home");
     }
 
 }

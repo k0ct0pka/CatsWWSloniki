@@ -1,0 +1,17 @@
+body{
+    background-color: black;
+    color: white;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    column-gap: 20px;
+
+}
+div{
+    width: 350px;
+    height: 500px;
+    border: white 2px dot-dot-dash;
+}
+div img{
+    width: 350px;
+    height: 350px;
+}

@@ -24,12 +24,15 @@ public class UserDao implements BaseDao<UserDto> {
     private final Logger log = LoggerFactory.getLogger(UserDao.class);
 
     @Override
-    public void save(UserDto user) {
-        dsl.insertInto(USER)
+    public Integer save(UserDto user) {
+        Integer id = dsl.insertInto(USER)
                 .columns(USER.NAME, USER.EMAIL, USER.PASSWORD)
                 .values(user.getName(), user.getEmail(), user.getPassword())
-                .execute();
-        log.info("user {} inserted", user);
+                .returningResult(USER.ID)
+                .fetchOne()
+                .into(Integer.class);
+        log.info("user {} inserted his id{}", user,id);
+        return id;
     }
 
     @Override
@@ -44,19 +47,18 @@ public class UserDao implements BaseDao<UserDto> {
     }
 
     @Override
-    public void delete(UserDto userDto) {
+    public void delete(Integer id) {
         dsl.delete(USER)
-                .where(USER.ID.eq(userDto.getId()))
+                .where(USER.ID.eq(id))
                 .execute();
-        log.info("user {} deleted", userDto.getId());
+        log.info("user {} deleted", id);
     }
     public UserDto findByEmail(String email) {
         UserDto user;
         try{
              user = dsl.select(USER.ID, USER.NAME, USER.EMAIL, USER.PASSWORD)
                      .from(USER)
-                     .where(USER.EMAIL.eq(email)).fetchOne()
-                     .into(UserDto.class);
+                     .where(USER.EMAIL.eq(email)).fetchOneInto(UserDto.class);
         } catch (NullPointerException e){
             log.info("user {} not found", email);
             throw new RuntimeException("user " + email + " not found");
