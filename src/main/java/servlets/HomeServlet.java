@@ -8,6 +8,7 @@ import factories.impls.CatFactory;
 import factories.impls.UserFactory;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +31,11 @@ import java.util.List;
 @NoArgsConstructor
 @Component
 @ComponentScan(basePackageClasses = CatService.class)
+@MultipartConfig(
+        fileSizeThreshold = 1024*1024*2,
+        maxFileSize = 1024*1024*10,
+        maxRequestSize = 1024*1024*11
+)
 public class HomeServlet extends HttpServlet {
     @Autowired
     private CatService catService;
@@ -52,6 +58,11 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         catService.save(req);
+        resp.sendRedirect("/home");
+    }
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        catService.update(req);
         resp.sendRedirect("/home");
     }
 

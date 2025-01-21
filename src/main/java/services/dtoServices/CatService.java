@@ -4,15 +4,19 @@ import dao.impls.CatDao;
 import dto.CatDto;
 import dto.UserDto;
 import factories.impls.CatFactory;
+import filters.wrappers.FileDiskRequestWrapper;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import lombok.SneakyThrows;
 import org.apache.commons.fileupload2.core.DiskFileItem;
 import org.apache.commons.fileupload2.core.DiskFileItemFactory;
 import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletDiskFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import services.BaseDtoService;
 import services.StorageService;
 
@@ -49,17 +53,15 @@ public class CatService implements BaseDtoService<CatDto> {
     @SneakyThrows
     @Override
     public void update(HttpServletRequest req) {
-        List<DiskFileItem> diskFileItems = diskFileItemFactory.parseRequest(req);
-        Integer id = Integer.valueOf(diskFileItems.get(1).getString());
-        InputStream inputStream = diskFileItems.get(2).getInputStream();
+
+        Integer id = Integer.valueOf(IOUtils.toString(req.getPart("id").getInputStream()));
+        InputStream inputStream = req.getPart("image").getInputStream();
         if(inputStream.available()>0) {
             storageService.uploadFile(id, inputStream);
         }
         Map<String, String> params = new HashMap<>();
-        for (int i = 0; i<diskFileItems.size(); i++) {
-            if(i==2)continue;
-            params.put(diskFileItems.get(i).getFieldName(), diskFileItems.get(i).getString());
-        }
+        params.put("name", IOUtils.toString(req.getPart("name").getInputStream()));
+        params.put("breed", IOUtils.toString(req.getPart("breed").getInputStream()));
         CatDto build = catFactory.build(params);
         build.setUser((UserDto) req.getSession().getAttribute("user"));
         catDao.update(build);
@@ -68,18 +70,16 @@ public class CatService implements BaseDtoService<CatDto> {
     @SneakyThrows
     @Override
     public void save(HttpServletRequest req) {
-        List<DiskFileItem> diskFileItems = diskFileItemFactory.parseRequest(req);
-        DiskFileItem diskFileItem = diskFileItems.get(2);
+        InputStream inputStream = req.getPart("image").getInputStream();
         Map<String, String> params = new HashMap<>();
-        for (int i = 0; i<diskFileItems.size() - 1; i++) {
-            params.put(diskFileItems.get(i).getFieldName(), diskFileItems.get(i).getString());
-        }
+        params.put("name", IOUtils.toString(req.getPart("name").getInputStream()));
+        params.put("breed", IOUtils.toString(req.getPart("breed").getInputStream()));
 
         log.info(params.toString());
         CatDto build = catFactory.build(params);
         build.setUser((UserDto) req.getSession().getAttribute("user"));
         Integer id = catDao.save(build);
-        storageService.uploadFile(id, diskFileItem.getInputStream());
+        storageService.uploadFile(id, inputStream);
     }
 
     public List<CatDto> getCatsByUserId(Integer userId) {

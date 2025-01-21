@@ -1,6 +1,5 @@
 package servlets;
 
-import configs.AwsS3Config;
 import configs.FileUploaderConfig;
 import configs.HikariConfiguration;
 import dao.impls.CatDao;
@@ -19,8 +18,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import services.AuthorizationService;
-import services.StorageService;
 import services.authoriationImpls.AuthorizationServiceImpl;
 import services.dtoServices.CatService;
 import services.storageImpls.S3StorageService;
@@ -41,7 +38,7 @@ public class AuthorizationServlet extends HttpServlet {
         AnnotationConfigWebApplicationContext ac = (AnnotationConfigWebApplicationContext) config.getServletContext().getAttribute("applicationContext");
         ac.scan("org.example");
         ac.register(HikariConfiguration.class);
-        ac.register(AwsS3Config.class);
+
         ac.register(FileUploaderConfig.class);
         ac.refresh();
         ac.register(UserDao.class);

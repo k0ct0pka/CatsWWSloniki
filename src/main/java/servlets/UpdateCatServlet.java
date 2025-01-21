@@ -36,9 +36,5 @@ public class UpdateCatServlet extends HttpServlet {
         req.getRequestDispatcher("/mycats.jsp").forward(req, resp);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        catService.update(req);
-        resp.sendRedirect("/home");
-    }
+
 }
